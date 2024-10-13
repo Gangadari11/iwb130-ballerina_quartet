@@ -112,11 +112,11 @@ service /heart_disease on new http:Listener(8081) {
 
 }
 
-
+//************************************************************Add records using this command
 //curl -X POST http://localhost:8081/heart_disease/addRecord ^
 //-H "Content-Type: application/json" ^
 //-d @"C:\Users\ACER\Desktop\Healthcare\Healthcare\record.json"  
 
 
-
+//**********************************Retrieve data using this command
 //curl -X GET http://localhost:8081/heart_disease/getRecords -o C:\Users\ACER\Desktop\Healthcare\Healthcare\records_output.json
