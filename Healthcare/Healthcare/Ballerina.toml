@@ -1,0 +1,23 @@
+[package]
+org = "acer"
+name = "Healthcare"
+version = "0.1.0"
+distribution = "Healthcare Ballerina Service"
+
+[build-options]
+observabilityIncluded = true
+
+# [dependencies]
+# ballerina/mysql = "1.2.0" # Using the correct dependency name for MySQL
+
+# [dependencies]
+# ballerinax/mysql = "1.13.1" # Correct MySQL dependency
+
+[platform]
+[[platform.java11.dependency]]  # Use double brackets for array entries
+path = "./libs/mysql-connector-j-9.0.0.jar"
+artifactId = "mysql-connector-java"
+version = "9.0.0"
+
+[dependencies]
+mysql = ">=1.0.0"
