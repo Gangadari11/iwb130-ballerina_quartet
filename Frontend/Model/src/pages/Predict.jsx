@@ -26,6 +26,7 @@ const Predict = () => {
     };
 
     return (
+        <div className='predictbackground'>
         <Container className="mt-5">
             <h2 className="text-center">Make a Prediction</h2>
             <Form onSubmit={handleSubmit}>
@@ -37,6 +38,18 @@ const Predict = () => {
                         value={formData.name}
                         onChange={handleChange}
                         placeholder="Enter your name"
+                        required
+                    />
+                </Form.Group>
+
+                <Form.Group controlId="formEmail">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Enter your email"
                         required
                     />
                 </Form.Group>
@@ -69,29 +82,7 @@ const Predict = () => {
                     </Form.Control>
                 </Form.Group>
 
-                <Form.Group controlId="formEmail">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="Enter your email"
-                        required
-                    />
-                </Form.Group>
-
-                <Form.Group controlId="formInputData">
-                    <Form.Label>Input Data for Prediction</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="inputData"
-                        value={formData.inputData}
-                        onChange={handleChange}
-                        placeholder="Enter data (e.g., height, weight)"
-                        required
-                    />
-                </Form.Group>
+                
                 <Form.Group controlId="formCondition">
                     <Form.Label>Condition</Form.Label>
                     <Form.Control
@@ -251,6 +242,7 @@ const Predict = () => {
                 </Button>
             </Form>
         </Container>
+        </div>
     );
 };
 

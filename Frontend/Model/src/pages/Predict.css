@@ -1,5 +1,10 @@
 /* Predict.css */
 
+.predictbackground{
+    background-image:url('../assets/predictbackground.jpg');
+    
+
+}
 /* Overall container styling */
 .mt-5 {
     width:100vw;
