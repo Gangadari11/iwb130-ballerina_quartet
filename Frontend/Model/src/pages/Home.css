@@ -1,0 +1,12 @@
+/* Home.css */
+
+.home-background {
+    background-image: url('C:\Users\lchat\One Drive-UoM\OneDrive - University of Moratuwa\Ballerina submission 1\Submission2\Model\src\assets\homebgimg.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 100vh; /* Full height */
+    display: flex;
+    align-items: center; /* Center content vertically */
+    justify-content: center; /* Center content horizontally */
+    color: white; /* Change text color for better visibility */
+}

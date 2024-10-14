@@ -1,0 +1,40 @@
+/* Predict.css */
+
+/* Overall container styling */
+.container-predict {
+    margin-top: 2rem; /* Adds space above the container */
+    padding: 2rem; /* Adds padding around the container */
+    background-color: #f8f9fa; /* Light background color */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+}
+
+/* Heading styling */
+h2-predict {
+    margin-bottom: 1.5rem; /* Space below the heading */
+    color: #343a40; /* Dark gray color for the heading */
+}
+
+/* Form control spacing */
+.form-control {
+    margin-bottom: 1rem; /* Space between form controls */
+    border-radius: 4px; /* Rounded corners for form controls */
+}
+
+/* Button styling */
+button {
+    margin-top: 1rem; /* Space above the button */
+    width: 100%; /* Full width buttons */
+}
+
+/* Button hover effect */
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    color: white; /* White text on hover */
+}
+
+/* Input focus effect */
+.form-control:focus {
+    border-color: #007bff; /* Blue border on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Blue shadow effect on focus */
+}
