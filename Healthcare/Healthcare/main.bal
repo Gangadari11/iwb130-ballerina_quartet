@@ -25,7 +25,7 @@ type HeartDiseaseRecord record {
     int slope;
     int ca;
     int thal;
-    int result;
+    int target;
 };
 
 service /heart_disease on new http:Listener(8081) {
@@ -52,7 +52,7 @@ service /heart_disease on new http:Listener(8081) {
         int slope = check reqData.slope;
         int ca = check reqData.ca;
         int thal = check reqData.thal;
-        int resultValue = check reqData.result;
+        int target = check reqData.target;
 
         // Log extracted values
         io:println("Extracted values - Age: ", age, ", Sex: ", sex, ", CP: ", cp);
@@ -60,7 +60,7 @@ service /heart_disease on new http:Listener(8081) {
         // Prepare the SQL query to insert the data
         sql:ParameterizedQuery insertQuery = `INSERT INTO heart_disease_data
                                         (age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal, result) 
-                                        VALUES (${age}, ${sex}, ${cp}, ${trestbps}, ${chol}, ${fbs}, ${restecg}, ${thalach}, ${exang}, ${oldpeak}, ${slope}, ${ca}, ${thal}, ${resultValue})`;
+                                        VALUES (${age}, ${sex}, ${cp}, ${trestbps}, ${chol}, ${fbs}, ${restecg}, ${thalach}, ${exang}, ${oldpeak}, ${slope}, ${ca}, ${thal}, ${target})`;
 
         // Execute the SQL insert query
         var sqlInsertResult = dbClient->execute(insertQuery);
