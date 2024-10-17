@@ -2,7 +2,7 @@ import ballerina/io;
 import ballerina/http;
 import ballerinax/mysql;
 import ballerina/sql;
-
+import ballerina/crypto;
 
 // Define configurable variables
 configurable string DB_HOST = ?;
@@ -53,6 +53,14 @@ type PredictionRequest record {
     int ca;
     int thal;
 };
+
+type UserRecord record{
+    string username;
+    string name;
+    string email; 
+    string passwordHash; // Hashed password
+};
+
 
 service /heart_disease on new http:Listener(8081){
     // Resource to get prediction from Flask service and add record to the database
@@ -188,6 +196,71 @@ resource function get getRecordById(http:Caller caller, int patientId) returns e
 
 
 
+}
+
+// Authentication service
+service /auth on new http:Listener(8080) {
+    // Resource for user signup
+    resource function post signup(http:Caller caller, http:Request req) returns error? {
+        json|error reqData = req.getJsonPayload();
+        
+        if reqData is error {
+            return caller->respond({status: "error", message: "Invalid JSON payload"});
+        }
+        
+        string username = check reqData.username.ensureType(string);
+        string name = check reqData.name.ensureType(string);
+        string email = check reqData.email.ensureType(string);
+        string password = check reqData.password.ensureType(string);
+        
+        string passwordHash = crypto:hashSha256(password.toBytes()).toBase16();
+        
+        sql:ParameterizedQuery insertQuery = `INSERT INTO users (username, name, email, password_hash)
+                                              VALUES (${username}, ${name}, ${email}, ${passwordHash})`;
+        
+        sql:ExecutionResult|sql:Error sqlInsertResult = check dbClient->execute(insertQuery);
+        
+        if sqlInsertResult is sql:Error {
+            io:println("Error executing query: ", sqlInsertResult.message());
+            return caller->respond({status: "error", message: "Failed to signup: Database error"});
+        }
+        
+        check caller->respond({status: "success", message: "Signup successful"});
+        io:println("User signed up successfully");
+    }
+
+    // Resource for user login
+    resource function post login(http:Caller caller, http:Request req) returns error? {
+        json|error reqData = req.getJsonPayload();
+        
+        if reqData is error {
+            return caller->respond({status: "error", message: "Invalid JSON payload"});
+        }
+        
+        string username = check reqData.username.ensureType(string);
+        string password = check reqData.password.ensureType(string);
+        
+        sql:ParameterizedQuery selectQuery = `SELECT * FROM users WHERE username = ${username}`;
+        
+        stream<UserRecord, sql:Error?> resultStream = dbClient->query(selectQuery);
+        
+        record {|UserRecord value;|}? result = check resultStream.next();
+        check resultStream.close();
+        
+        if result is () {
+            return caller->respond({status: "error", message: "Invalid username or password"});
+        }
+        
+        UserRecord user = result.value;
+        string hashedInputPassword = crypto:hashSha256(password.toBytes()).toBase16();
+        
+        if user.passwordHash == hashedInputPassword {
+            check caller->respond({status: "success", message: "Login successful", email: user.email});
+            io:println("User logged in successfully");
+        } else {
+            check caller->respond({status: "error", message: "Invalid username or password"});
+        }
+    }
 }
 
 //************************************************************Add records using this command
