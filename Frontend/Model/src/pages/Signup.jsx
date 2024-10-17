@@ -1,17 +1,47 @@
 import React, { useState } from 'react';
-import { Container, Form, Button } from 'react-bootstrap';
+import { Container, Form, Button,Alert } from 'react-bootstrap';
 
 const Signup = () => {
-    const [formData, setFormData] = useState({ username: '', password: '' });
+    const [formData, setFormData] = useState({
+        username: '',
+        name: '',
+        email: '',
+        password: ''
+    });
+
+    const [message, setMessage] = useState({ text: '', type: '' });
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    // Handle form submission
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle signup logic here
+
+        try {
+            const response = await fetch('http://localhost:8080/auth/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+            if (data.status === 'success') {
+                setMessage({ text: data.message, type: 'success' });
+                // Optionally clear the form
+                setFormData({ username: '', name: '', email: '', password: '' });
+            } else {
+                setMessage({ text: data.message, type: 'danger' });
+            }
+        } catch (error) {
+            console.error('Error during signup:', error);
+            setMessage({ text: 'Failed to sign up. Please try again.', type: 'danger' });
+        }
     };
+
 
     return (
         <Container className="mt-5">
