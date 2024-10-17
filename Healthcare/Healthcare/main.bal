@@ -3,15 +3,24 @@ import ballerina/http;
 import ballerinax/mysql;
 import ballerina/sql;
 
-// Initialize the MySQL client
-mysql:Client dbClient = check new (host = "localhost",
-                                   port = 3306,
-                                   database = "healthcare2",
-                                   user = "root",
-                                   password = "..........");
 
+// Define configurable variables
+configurable string DB_HOST = ?;
+configurable int DB_PORT = 3306;
+configurable string DB_NAME = ?;
+configurable string DB_USER = ?;
+configurable string DB_PASSWORD = ?;
+configurable string FLASK_SERVICE_URL = ?;
+
+// Initialize the MySQL client using the configurable variables
+mysql:Client dbClient = check new (host = DB_HOST,
+                                   port = DB_PORT,
+                                   database = DB_NAME,
+                                   user = DB_USER,
+                                   password = DB_PASSWORD);
 // Define the row type for the heart disease data
 type HeartDiseaseRecord record {
+    int patient_id;
     int age;
     int sex;
     int cp;
@@ -25,90 +34,159 @@ type HeartDiseaseRecord record {
     int slope;
     int ca;
     int thal;
-    int result;
+    int target;
 };
 
-service /heart_disease on new http:Listener(8081) {
+// Define the request structure for prediction
+type PredictionRequest record {
+    int age;
+    int sex;
+    int cp;
+    int trestbps;
+    int chol;
+    int fbs;
+    int restecg;
+    int thalach;
+    int exang;
+    float oldpeak;
+    int slope;
+    int ca;
+    int thal;
+};
 
-    resource function post addRecord(http:Caller caller, http:Request req) returns error? {
+service /heart_disease on new http:Listener(8081){
+    // Resource to get prediction from Flask service and add record to the database
+    resource function post predictAndAddRecord(http:Caller caller, http:Request req) returns error?{
         // Log incoming request
-        io:println("Received request to add record");
+        io:println("Received request for prediction and adding record");
 
         // Get JSON payload from request
         json reqData = check req.getJsonPayload();
-        io:println("Request Data: ", reqData.toString()); // Log the request data
+        io:println("Prediction Request Data: ", reqData.toString()); // Log the request data
 
-        // Extract data from the JSON payload
-        int age = check reqData.age;
-        int sex = check reqData.sex;
-        int cp = check reqData.cp;
-        int trestbps = check reqData.trestbps;
-        int chol = check reqData.chol;
-        int fbs = check reqData.fbs;
-        int restecg = check reqData.restecg;
-        int thalach = check reqData.thalach;
-        int exang = check reqData.exang;
-        float oldpeak = check reqData.oldpeak;
-        int slope = check reqData.slope;
-        int ca = check reqData.ca;
-        int thal = check reqData.thal;
-        int resultValue = check reqData.result;
+        // Extract the first 13 attributes to send to the Flask model
+        PredictionRequest predictionRequest = {
+            age: check reqData.age,
+            sex: check reqData.sex,
+            cp: check reqData.cp,
+            trestbps: check reqData.trestbps,
+            chol: check reqData.chol,
+            fbs: check reqData.fbs,
+            restecg: check reqData.restecg,
+            thalach: check reqData.thalach,
+            exang: check reqData.exang,
+            oldpeak: check reqData.oldpeak,
+            slope: check reqData.slope,
+            ca: check reqData.ca,
+            thal: check reqData.thal
+        };
+        // Send the extracted data to Flask service for prediction
+        http:Client flaskClient = check new (FLASK_SERVICE_URL);
+        http:Response flaskResponse = check flaskClient->post("/predict", predictionRequest);
 
-        // Log extracted values
-        io:println("Extracted values - Age: ", age, ", Sex: ", sex, ", CP: ", cp);
+        // Get the prediction from the Flask response
+        json predictionResult = check flaskResponse.getJsonPayload();
+        int prediction = check predictionResult.prediction; // Extract prediction from response
 
-        // Prepare the SQL query to insert the data
+        io:println("Prediction Result: ", prediction);
+
+        // Add the record along with the prediction result to the database
         sql:ParameterizedQuery insertQuery = `INSERT INTO heart_disease_data
-                                        (age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal, result) 
-                                        VALUES (${age}, ${sex}, ${cp}, ${trestbps}, ${chol}, ${fbs}, ${restecg}, ${thalach}, ${exang}, ${oldpeak}, ${slope}, ${ca}, ${thal}, ${resultValue})`;
+                                            (age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal, result)
+                                            VALUES (${predictionRequest.age}, ${predictionRequest.sex}, ${predictionRequest.cp}, 
+                                                    ${predictionRequest.trestbps}, ${predictionRequest.chol}, ${predictionRequest.fbs}, 
+                                                    ${predictionRequest.restecg}, ${predictionRequest.thalach}, ${predictionRequest.exang}, 
+                                                    ${predictionRequest.oldpeak}, ${predictionRequest.slope}, ${predictionRequest.ca}, 
+                                                    ${predictionRequest.thal}, ${prediction})`;
 
         // Execute the SQL insert query
         var sqlInsertResult = dbClient->execute(insertQuery);
         if (sqlInsertResult is error) {
-            // Log error message and send response to caller
             io:println("Error executing query: ", sqlInsertResult.message());
             check caller->respond("Failed to add record: " + sqlInsertResult.message());
             return;
         }
 
-        // Send success response
-        check caller->respond("Record added successfully.");
-        io:println("Record added successfully");
+        // Send success response with the prediction result
+        check caller->respond({"message": "Record added successfully", "prediction": prediction});
+        io:println("Record added successfully with prediction: ", prediction);
+    }
+    // Resource to get all heart disease records
+
+    resource function get getRecords(http:Caller caller) returns error? {
+    // Log incoming request
+    io:println("Received request to get records");
+
+    // Prepare the SQL query to select all records
+    sql:ParameterizedQuery selectQuery = `SELECT * FROM heart_disease_data`;
+
+    // Execute the SQL select query and get the stream of results
+    stream<HeartDiseaseRecord, sql:Error?> resultStream = dbClient->query(selectQuery, HeartDiseaseRecord);
+
+    // Create a list to hold the records
+    HeartDiseaseRecord[] records = [];
+
+    // Collect records from the stream using forEach
+    var forEachResult = resultStream.forEach(function (HeartDiseaseRecord? r) {
+        if (r is HeartDiseaseRecord) {
+            records.push(r);
+        }
+    });
+
+    // Handle potential error during streaming
+    if (forEachResult is sql:Error) {
+        io:println("Error during streaming: ", forEachResult.message());
+        // Respond with error message to the caller
+        var errorResponse = caller->respond("Error occurred while retrieving records: " + forEachResult.message());
+        if (errorResponse is error) {
+            io:println("Error sending response: ", errorResponse.message());
+        }
+        return forEachResult; // Return the error to caller
     }
 
-
-    // New resource function to get records
-    resource function get getRecords(http:Caller caller) returns error? {
-        // Log incoming request
-        io:println("Received request to get records");
-
-        // Prepare the SQL query to select all records
-        sql:ParameterizedQuery selectQuery = `SELECT * FROM heart_disease_data`;
-
-        // Execute the SQL select query and get the stream of results
-        stream<HeartDiseaseRecord, sql:Error?> resultStream = check dbClient->query(selectQuery, HeartDiseaseRecord);
-
-        // Create a list to hold the records
-        HeartDiseaseRecord[] records = [];
-
-        // Collect records from the stream using forEach
-        var forEachResult = resultStream.forEach(function (HeartDiseaseRecord? r) {
-            if (r is HeartDiseaseRecord) {
-                records.push(r);
-            }
-        });
-
-        // Handle the potential error from forEach
-        if (forEachResult is sql:Error) {
-            io:println("Error during streaming: ", forEachResult.message());
-            return forEachResult; // Return the error to caller
-        }
-
-        // Send success response with records
-        check caller->respond(records);
+    // Send the records as the response
+    var response = caller->respond(records);
+    if (response is error) {
+        io:println("Error sending response: ", response.message());
+    } else {
         io:println("Records retrieved successfully");
     }
-        
+}
+
+resource function get getRecordById(http:Caller caller, int patientId) returns error? {
+    // Prepare the SQL query to select a record by patient ID
+    sql:ParameterizedQuery selectQuery = `SELECT * FROM heart_disease_data WHERE id = ${patientId}`;
+
+    // Execute the query and get a stream of results
+    stream<HeartDiseaseRecord, sql:Error?> resultStream = dbClient->query(selectQuery, HeartDiseaseRecord);
+
+    // Use a variable to store the found record
+    HeartDiseaseRecord? foundrecord = null;
+
+    // Process the stream to find the first record
+    var forEachResult = resultStream.forEach(function (HeartDiseaseRecord? r) {
+        if (r is HeartDiseaseRecord) {
+            foundrecord = r; // Store the record if found
+        }
+    });
+
+    // Check for any streaming errors
+    if (forEachResult is sql:Error) {
+        return caller->respond("Error retrieving record: " + forEachResult.message());
+    }
+
+    // Check if a record was found
+    if (foundrecord is HeartDiseaseRecord) {
+        // Send the found record as the response
+        return caller->respond(foundrecord);
+    } else {
+        // Send a not found response if no record was found
+        return caller->respond("No record found for Patient ID: " + patientId.toString());
+    }
+}
+
+
+
 
 }
 
