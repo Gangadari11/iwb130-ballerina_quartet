@@ -26,6 +26,7 @@ const Predict = () => {
     };
 
     return (
+        <div className='predictbackground'>
         <Container className="mt-5">
             <h2 className="text-center">Make a Prediction</h2>
             <Form onSubmit={handleSubmit}>
@@ -37,6 +38,18 @@ const Predict = () => {
                         value={formData.name}
                         onChange={handleChange}
                         placeholder="Enter your name"
+                        required
+                    />
+                </Form.Group>
+
+                <Form.Group controlId="formEmail">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Enter your email"
                         required
                     />
                 </Form.Group>
@@ -69,28 +82,159 @@ const Predict = () => {
                     </Form.Control>
                 </Form.Group>
 
-                <Form.Group controlId="formEmail">
-                    <Form.Label>Email</Form.Label>
+                
+                <Form.Group controlId="formCondition">
+                    <Form.Label>Condition</Form.Label>
                     <Form.Control
-                        type="email"
-                        name="email"
-                        value={formData.email}
+                        as="select"
+                        name="condition"
+                        value={formData.condition}
                         onChange={handleChange}
-                        placeholder="Enter your email"
+                        required
+                    >
+                        <option value="">Select condition</option>
+                        <option value="0">0 - At Least</option>
+                        <option value="1">1 - Condition: Slightly Distressed</option>
+                        <option value="2">2 - Medium Condition/pain</option>
+                    </Form.Control>
+                </Form.Group>
+
+                <Form.Group controlId="formTrestbps">
+                    <Form.Label>Resting Blood Pressure (in mm Hg)</Form.Label>
+                    <Form.Control
+                        type="number"
+                        name="trestbps"
+                        value={formData.trestbps}
+                        onChange={handleChange}
+                        placeholder="Enter resting blood pressure"
                         required
                     />
                 </Form.Group>
 
-                <Form.Group controlId="formInputData">
-                    <Form.Label>Input Data for Prediction</Form.Label>
+                <Form.Group controlId="formChol">
+                    <Form.Label>Serum Cholesterol (in mg/dl)</Form.Label>
                     <Form.Control
-                        type="text"
-                        name="inputData"
-                        value={formData.inputData}
+                        type="number"
+                        name="chol"
+                        value={formData.chol}
                         onChange={handleChange}
-                        placeholder="Enter data (e.g., height, weight)"
+                        placeholder="Enter serum cholesterol"
                         required
                     />
+                </Form.Group>
+
+                <Form.Group controlId="formFbs">
+                    <Form.Label>Fasting Blood Sugar (greater than 120 mg/dl)</Form.Label>
+                    <Form.Control
+                        as="select"
+                        name="fbs"
+                        value={formData.fbs}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">Select fasting blood sugar</option>
+                        <option value="0">0 - False</option>
+                        <option value="1">1 - True</option>
+                    </Form.Control>
+                </Form.Group>
+
+                <Form.Group controlId="formRestecg">
+                    <Form.Label>Resting Electrocardiographic Results</Form.Label>
+                    <Form.Control
+                        as="select"
+                        name="restecg"
+                        value={formData.restecg}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">Select resting electrocardiographic results</option>
+                        <option value="0">0 - Normal</option>
+                        <option value="1">1 - ST-T wave abnormality</option>
+                        <option value="2">2 - Left ventricular hypertrophy</option>
+                    </Form.Control>
+                </Form.Group>
+
+                <Form.Group controlId="formThalach">
+                    <Form.Label>Maximum Heart Rate Achieved</Form.Label>
+                    <Form.Control
+                        type="number"
+                        name="thalach"
+                        value={formData.thalach}
+                        onChange={handleChange}
+                        placeholder="Enter maximum heart rate achieved"
+                        required
+                    />
+                </Form.Group>
+
+                <Form.Group controlId="formExang">
+                    <Form.Label>Exercise Induced Angina</Form.Label>
+                    <Form.Control
+                        as="select"
+                        name="exang"
+                        value={formData.exang}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">Select exercise induced angina</option>
+                        <option value="0">0 - No</option>
+                        <option value="1">1 - Yes</option>
+                    </Form.Control>
+                </Form.Group>
+
+                <Form.Group controlId="formOldpeak">
+                    <Form.Label>ST Depression Induced by Exercise Relative to Rest</Form.Label>
+                    <Form.Control
+                        type="number"
+                        name="oldpeak"
+                        value={formData.oldpeak}
+                        onChange={handleChange}
+                        placeholder="Enter ST depression value"
+                        required
+                    />
+                </Form.Group>
+
+                <Form.Group controlId="formSlope">
+                    <Form.Label>Slope of the Peak Exercise ST Segment</Form.Label>
+                    <Form.Control
+                        as="select"
+                        name="slope"
+                        value={formData.slope}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">Select slope</option>
+                        <option value="0">0 - Upsloping</option>
+                        <option value="1">1 - Flat</option>
+                        <option value="2">2 - Downsloping</option>
+                    </Form.Control>
+                </Form.Group>
+
+                <Form.Group controlId="formCa">
+                    <Form.Label>Number of Major Vessels Colored by Fluoroscopy</Form.Label>
+                    <Form.Control
+                        type="number"
+                        name="ca"
+                        value={formData.ca}
+                        onChange={handleChange}
+                        placeholder="Enter number of major vessels (0-3)"
+                        required
+                    />
+                </Form.Group>
+
+                <Form.Group controlId="formThal">
+                    <Form.Label>Thalassemia</Form.Label>
+                    <Form.Control
+                        as="select"
+                        name="thal"
+                        value={formData.thal}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">Select thalassemia</option>
+                        <option value="1">1 - Normal</option>
+                        <option value="2">2 - Fixed Defect</option>
+                        <option value="3">3 - Reversible Defect</option>
+                    </Form.Control>
                 </Form.Group>
 
                 <Button variant="primary" type="submit">
@@ -98,6 +242,7 @@ const Predict = () => {
                 </Button>
             </Form>
         </Container>
+        </div>
     );
 };
 

@@ -70,6 +70,8 @@ service /heart_disease on new http:Listener(8081){
 
         // Get JSON payload from request
         json reqData = check req.getJsonPayload();
+
+
         io:println("Prediction Request Data: ", reqData.toString()); // Log the request data
 
         // Extract the first 13 attributes to send to the Flask model
@@ -106,6 +108,7 @@ service /heart_disease on new http:Listener(8081){
                                                     ${predictionRequest.restecg}, ${predictionRequest.thalach}, ${predictionRequest.exang}, 
                                                     ${predictionRequest.oldpeak}, ${predictionRequest.slope}, ${predictionRequest.ca}, 
                                                     ${predictionRequest.thal}, ${prediction})`;
+
 
         // Execute the SQL insert query
         var sqlInsertResult = dbClient->execute(insertQuery);

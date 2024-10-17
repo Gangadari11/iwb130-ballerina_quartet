@@ -1,8 +1,15 @@
 /* Predict.css */
 
+.predictbackground{
+    background-image:url('../assets/predictbackground.jpg');
+    
+
+}
 /* Overall container styling */
-.container-predict {
-    margin-top: 2rem; /* Adds space above the container */
+.mt-5 {
+    width:100vw;
+    place-content: center;
+    margin-top: 100px; /* Adds space above the container */
     padding: 2rem; /* Adds padding around the container */
     background-color: #f8f9fa; /* Light background color */
     border-radius: 8px; /* Rounded corners */
@@ -11,6 +18,7 @@
 
 /* Heading styling */
 h2-predict {
+    margin-top: 0;
     margin-bottom: 1.5rem; /* Space below the heading */
     color: #343a40; /* Dark gray color for the heading */
 }
