@@ -2,7 +2,7 @@
 #USE healthcare2;
 
 -- CREATE TABLE heart_disease_data (
---     id INT AUTO_INCREMENT PRIMARY KEY,
+--     patient_id INT AUTO_INCREMENT PRIMARY KEY,
 --     age INT NOT NULL,
 --     sex TINYINT NOT NULL,
 --     cp TINYINT NOT NULL,
