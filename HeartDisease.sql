@@ -2,7 +2,7 @@
 #USE healthcare2;
 
 -- CREATE TABLE heart_disease_data (
---     id INT AUTO_INCREMENT PRIMARY KEY,
+--     patient_id INT AUTO_INCREMENT PRIMARY KEY,
 --     age INT NOT NULL,
 --     sex TINYINT NOT NULL,
 --     cp TINYINT NOT NULL,
@@ -29,3 +29,23 @@
 -- (52, 1, 1, 120, 244, 0, 1, 158, 0, 0.0, 1, 0, 2, 1),
 -- (60, 0, 2, 130, 230, 0, 1, 140, 0, 1.5, 1, 0, 2, 1),
 -- (58, 0, 1, 130, 245, 0, 1, 150, 0, 0.6, 1, 0, 2, 1);
+
+CREATE TABLE user
+(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+INSERT INTO user (username, email, password) VALUES
+('user1', 'user1@example.com', 'password123'),
+('user2', 'user2@example.com', 'qwerty456'),
+('user3', 'user3@example.com', 'abcdef789'),
+('user4', 'user4@example.com', 'pass1234'),
+('user5', 'user5@example.com', 'secret567'),
+('user6', 'user6@example.com', 'letmein890'),
+('user7', 'user7@example.com', '12345password'),
+('user8', 'user8@example.com', 'mypassword321'),
+('user9', 'user9@example.com', 'helloWorld!234'),
+('user10', 'user10@example.com', 'welcome987');

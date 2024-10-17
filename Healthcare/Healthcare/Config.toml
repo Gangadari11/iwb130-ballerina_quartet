@@ -1,0 +1,6 @@
+DB_HOST = "mysql-26a5578-slicchandrika-3c7e.e.aivencloud.com"
+DB_PORT = 22695
+DB_NAME = "defaultdb"
+DB_USER = "avnadmin"
+DB_PASSWORD = "AVNS_T-z6LIPxbODpJbeYeRy"
+FLASK_SERVICE_URL = "http://localhost:5000"
