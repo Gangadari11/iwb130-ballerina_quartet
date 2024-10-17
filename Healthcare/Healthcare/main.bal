@@ -6,7 +6,7 @@ import ballerina/crypto;
 
 // Define configurable variables
 configurable string DB_HOST = ?;
-configurable int DB_PORT = 3306;
+configurable int DB_PORT = ?;
 configurable string DB_NAME = ?;
 configurable string DB_USER = ?;
 configurable string DB_PASSWORD = ?;

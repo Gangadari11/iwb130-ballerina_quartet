@@ -1,6 +1,6 @@
-DB_HOST = "localhost"
-DB_PORT = 3306
-DB_NAME = "healthcare2"
-DB_USER = "root"
-DB_PASSWORD = "your_password"
+DB_HOST = "mysql-26a5578-slicchandrika-3c7e.e.aivencloud.com"
+DB_PORT = 22695
+DB_NAME = "defaultdb"
+DB_USER = "avnadmin"
+DB_PASSWORD = "AVNS_T-z6LIPxbODpJbeYeRy"
 FLASK_SERVICE_URL = "http://localhost:5000"
