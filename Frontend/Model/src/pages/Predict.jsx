@@ -51,7 +51,7 @@ const Predict = () => {
     
         try {
             // Make POST request to the Ballerina backend
-            const response = await axios.post('http://localhost:8080/heart_disease/predictAndAddRecord', numericFormData);
+            const response = await axios.post('http://localhost:8081/heart_disease/predictAndAddRecord', numericFormData);
             setResponseMessage(response.data.message);
         } catch (error) {
             setErrorMessage("Prediction failed: " + (error.response?.data?.message || "Unknown error"));
