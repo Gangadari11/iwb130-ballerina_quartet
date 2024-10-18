@@ -49,6 +49,7 @@ const Login = () => {
 
                 <Button variant="primary" type="submit">Login</Button>
             </Form>
+            {responseMessage && <p className="mt-3">{responseMessage}</p>}
         </Container>
     );
 };
