@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
 import './Predict.css'; // Import your CSS file if needed
+import axios from 'axios';
 
 const Predict = () => {
     const [formData, setFormData] = useState({
@@ -19,11 +20,17 @@ const Predict = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission here, e.g., send data to your backend
-        console.log('Form submitted:', formData);
+        try {
+            // Make POST request to the Ballerina signup service
+            const response = await axios.post('http://localhost:8080/heart_disease/predictAndAddRecord', formData);
+            setResponseMessage(response.data.message);
+        } catch (error) {
+            setResponseMessage("Prediction failed: " + (error.response?.data?.message || "Unknown error"));
+        }
     };
+
 
     return (
         <div className='predictbackground'>

@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
+import axios from 'axios';
 
 const Login = () => {
-    const [formData, setFormData] = useState({ username: '', password: '' });
+    const [formData, setFormData] = useState({  username: '', password: '' });
+    const [responseMessage, setResponseMessage] = useState('');
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle login logic here
+        try {
+            // Make POST request to the Ballerina signup service
+            const response = await axios.post('http://localhost:8080/auth/login', formData);
+            setResponseMessage(response.data.message);
+        } catch (error) {
+            setResponseMessage("Login failed: " + (error.response?.data?.message || "Unknown error"));
+        }
     };
 
     return (
