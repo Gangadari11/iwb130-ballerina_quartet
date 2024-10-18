@@ -37,15 +37,27 @@ const Predict = () => {
         e.preventDefault();
         setResponseMessage(null);
         setErrorMessage(null);
-
+    
+        // Convert the necessary fields to numeric values (float or int)
+        const numericFormData = {
+            ...formData,
+            age: parseInt(formData.age, 10),                 // Convert age to integer
+            trestbps: parseFloat(formData.trestbps),         // Convert resting blood pressure to float
+            chol: parseFloat(formData.chol),                 // Convert cholesterol to float
+            thalach: parseFloat(formData.thalach),           // Convert max heart rate to float
+            oldpeak: parseFloat(formData.oldpeak),           // Convert ST depression to float
+            ca: parseInt(formData.ca, 10),                   // Convert number of major vessels to integer
+        };
+    
         try {
             // Make POST request to the Ballerina backend
-            const response = await axios.post('http://localhost:8080/heart_disease/predictAndAddRecord', formData);
-            setResponseMessage(response.data.message);  // Update response message based on API response
+            const response = await axios.post('http://localhost:8080/heart_disease/predictAndAddRecord', numericFormData);
+            setResponseMessage(response.data.message);
         } catch (error) {
             setErrorMessage("Prediction failed: " + (error.response?.data?.message || "Unknown error"));
         }
     };
+    
 
     return (
         <div className='predictbackground'>
