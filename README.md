@@ -56,20 +56,34 @@ Make sure you have the following installed:
    pip install Flask
 
 4. **Usage**
-   Navigate to the Frontend directory and run following commands to run the React app
-
    ```bash
+   Navigate to the Frontend directory and run following commands to run the React app
    cd Frontend
    cd Model
    npm run dev
 
    After that navigate to the MLmodel directory to run the Flask server
 
-   ```bash
+   
    cd MLmodel
    python app.py
 
-   Then the Flask server should start running on http:localhost/500
+   Then the Flask server should start running on http:localhost/5000
+
+   Navigate to the Healthcare directory
+
+   cd Healthcare
+   cd Healthcare
+   bal build
+   bal run
+
+   If you find any unresolved modules pull them manually.
+
+Using the above commands you'll be able to setup the project.
+
+   
+
+   
 
 
    
