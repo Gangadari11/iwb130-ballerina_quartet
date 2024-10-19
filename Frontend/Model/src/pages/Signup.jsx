@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
-<<<<<<< Updated upstream
 
-const Signup = () => {
-    const [formData, setFormData] = useState({ username: '', password: '' });
-=======
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,7 +8,7 @@ const Signup = () => {
     const [formData, setFormData] = useState({ name: '', username: '', email: '', password: '' });
     const [responseMessage, setResponseMessage] = useState('');
     const navigate=useNavigate();
->>>>>>> Stashed changes
+
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,9 +16,7 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-<<<<<<< Updated upstream
-        // Handle signup logic here
-=======
+
         try {
             // Make POST request to the Ballerina signup service
             const response = await axios.post('http://localhost:8080/auth/signup', formData);
@@ -32,7 +26,7 @@ const Signup = () => {
         } catch (error) {
             setResponseMessage("Signup failed: " + (error.response?.data?.message || "Unknown error"));
         }
->>>>>>> Stashed changes
+
     };
 
 
