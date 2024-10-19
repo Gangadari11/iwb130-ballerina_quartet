@@ -11,7 +11,7 @@ const Home = () => {
             className="home-background"
         >
             <Container className="text-center">
-                <h1>Welcome to AI Predictor</h1>
+                <h1>Welcome to CardioInsight</h1>
                 <p className="lead">Use our AI model to get predictions based on your inputs!</p>
                 <Row className="justify-content-center">
                     <Col md="auto">
