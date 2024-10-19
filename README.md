@@ -45,19 +45,34 @@ Make sure you have the following installed:
    git clone https://github.com/Gangadari11/iwb130-ballerina_quartet.git
    cd iwb130-ballerina_quartet
 
-2. **Install dependencies:**
-    Frontend dependencies:
-bash
-Copy code
-cd Frontend
-npm install
-Backend (Model) dependencies: Navigate to the Model directory where the machine learning API resides and install Flask and the required libraries:
+2. **Frontend dependencies:**
+    
+    ```bash
+    cd Frontend
+    npm install
+3. **Backend (Model) dependencies:**
+   Navigate to the MLmodel directory where the machine learning API resides and install Flask and the required libraries:
+   ```bash
+   pip install Flask
 
-bash
-Copy code
-cd Model
-pip install Flask
-Additional dependencies:
+4. **Usage**
+   Navigate to the Frontend directory and run following commands to run the React app
+
+   ```bash
+   cd Frontend
+   cd Model
+   npm run dev
+
+   After that navigate to the MLmodel directory to run the Flask server
+
+   ```bash
+   cd MLmodel
+   python app.py
+
+   Then the Flask server should start running on http:localhost/500
+
+
+   
 
 If your project requires specific Python libraries for machine learning, ensure you have a requirements.txt file in the Model directory. Create a requirements.txt file with the following contents:
 
