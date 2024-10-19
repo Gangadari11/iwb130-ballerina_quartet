@@ -252,6 +252,7 @@ const Predict = () => {
             // Make POST request to the Ballerina service
             const response = await axios.post('http://localhost:8081/heart_disease/predictAndAddRecord', dataToSend);
             alert(response.data.message); // Display the response message
+            alert(response.data.prediction); // Display the prediction
         } catch (error) {
             alert("Prediction failed: " + (error.response?.data?.message || "Unknown error"));
         }
