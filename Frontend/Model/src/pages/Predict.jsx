@@ -228,7 +228,6 @@ const Predict = () => {
     //     }
     // };
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -248,15 +247,25 @@ const Predict = () => {
                 ca: parseInt(formData.ca, 10) || 0,
                 thal: parseInt(formData.thal, 10) || 0
             };
-
+    
             // Make POST request to the Ballerina service
             const response = await axios.post('http://localhost:8081/heart_disease/predictAndAddRecord', dataToSend);
-            alert(response.data.message); // Display the response message
-            alert(response.data.prediction); // Display the prediction
+    
+            // Display the appropriate message based on the prediction
+            if (response.data.prediction === 1) {
+                alert("There might be an issue");
+            } else if (response.data.prediction === 0) {
+                alert("You are safe!");
+            }
+    
+            // Optionally show the message returned by the server
+            alert(response.data.message); 
+    
         } catch (error) {
             alert("Prediction failed: " + (error.response?.data?.message || "Unknown error"));
         }
     };
+    
 
 
     return (
