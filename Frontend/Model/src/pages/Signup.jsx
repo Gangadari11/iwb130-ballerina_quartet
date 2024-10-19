@@ -1,17 +1,26 @@
 import React, { useState } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
+import axios from 'axios';
 
 const Signup = () => {
-    const [formData, setFormData] = useState({ username: '', password: '' });
+    const [formData, setFormData] = useState({ name: '', username: '', email: '', password: '' });
+    const [responseMessage, setResponseMessage] = useState('');
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle signup logic here
+        try {
+            // Make POST request to the Ballerina signup service
+            const response = await axios.post('http://localhost:8080/auth/signup', formData);
+            setResponseMessage(response.data.message);
+        } catch (error) {
+            setResponseMessage("Signup failed: " + (error.response?.data?.message || "Unknown error"));
+        }
     };
+
 
     return (
         <Container className="mt-5">
@@ -37,22 +46,16 @@ const Signup = () => {
                         required 
                     />
                 </Form.Group>
-
-                <Form.Group controlId="role" className="mb-3">
-                    <Form.Label>Role</Form.Label>
+                <Form.Group controlId="email" className="mb-3">
+                    <Form.Label>Email</Form.Label>
                     <Form.Control 
-                        as="select" 
-                        name="role" 
-                        value={formData.role} 
+                        type="email" 
+                        name="email" 
+                        value={formData.email} 
                         onChange={handleChange} 
                         required 
-                    >
-                    <option value="">Select your role</option>
-                    <option value="doctor">Doctor</option>
-                    <option value="scientist">Lab Scientist</option>
-                    </Form.Control>
+                    />
                 </Form.Group>
-
                 <Form.Group controlId="password" className="mb-3">
                     <Form.Label>Password</Form.Label>
                     <Form.Control 
@@ -63,9 +66,9 @@ const Signup = () => {
                         required 
                     />
                 </Form.Group>
-
                 <Button variant="primary" type="submit">Sign Up</Button>
             </Form>
+            {responseMessage && <p className="mt-3">{responseMessage}</p>}
         </Container>
     );
 };
