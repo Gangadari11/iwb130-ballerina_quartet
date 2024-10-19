@@ -18,7 +18,7 @@ const Signup = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 <<<<<<< Updated upstream
         // Handle signup logic here
@@ -34,6 +34,7 @@ const Signup = () => {
         }
 >>>>>>> Stashed changes
     };
+
 
     return (
         <Container className="mt-5">
@@ -59,22 +60,16 @@ const Signup = () => {
                         required 
                     />
                 </Form.Group>
-
-                <Form.Group controlId="role" className="mb-3">
-                    <Form.Label>Role</Form.Label>
+                <Form.Group controlId="email" className="mb-3">
+                    <Form.Label>Email</Form.Label>
                     <Form.Control 
-                        as="select" 
-                        name="role" 
-                        value={formData.role} 
+                        type="email" 
+                        name="email" 
+                        value={formData.email} 
                         onChange={handleChange} 
                         required 
-                    >
-                    <option value="">Select your role</option>
-                    <option value="doctor">Doctor</option>
-                    <option value="scientist">Lab Scientist</option>
-                    </Form.Control>
+                    />
                 </Form.Group>
-
                 <Form.Group controlId="password" className="mb-3">
                     <Form.Label>Password</Form.Label>
                     <Form.Control 
@@ -85,9 +80,9 @@ const Signup = () => {
                         required 
                     />
                 </Form.Group>
-
                 <Button variant="primary" type="submit">Sign Up</Button>
             </Form>
+            {responseMessage && <p className="mt-3">{responseMessage}</p>}
         </Container>
     );
 };

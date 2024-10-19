@@ -54,15 +54,38 @@ type PredictionRequest record {
     int thal;
 };
 
-type UserRecord record{
+type UserRecord record {
+    int id;
     string username;
+    string email;
+    string password;
     string name;
-    string email; 
-    string passwordHash; // Hashed password
 };
 
+// Define CORS configuration
+@http:ServiceConfig {
+    cors: {
+        allowMethods: ["GET","POST","OPTIONS"],
+        allowOrigins: ["http://localhost:5173"],
+        allowCredentials: false,
+        allowHeaders: ["Content-Type"],
+        exposeHeaders: ["X-CUSTOM-HEADER"],
+        maxAge: 3600
+    }
+}
 
 service /heart_disease on new http:Listener(8081){
+
+    @http:ResourceConfig {
+        
+        cors: {
+            allowMethods: ["POST","OPTIONS"],
+            allowOrigins: ["http://localhost:5173"],
+            allowCredentials: true,
+            allowHeaders: ["Content-Type"],
+            maxAge: 600
+        }
+    }
     // Resource to get prediction from Flask service and add record to the database
     resource function post predictAndAddRecord(http:Caller caller, http:Request req) returns error?{
         // Log incoming request
@@ -204,6 +227,19 @@ resource function get getRecordById(http:Caller caller, int patientId) returns e
 // Authentication service
 service /auth on new http:Listener(8080) {
     // Resource for user signup
+
+    @http:ResourceConfig {
+        
+        cors: {
+            allowMethods: ["POST","OPTIONS"],
+            allowOrigins: ["http://localhost:5173"],
+            allowCredentials: true,
+            allowHeaders: ["Content-Type"],
+            maxAge: 600
+        }
+    }
+
+    
     resource function post signup(http:Caller caller, http:Request req) returns error? {
         json|error reqData = req.getJsonPayload();
         
@@ -218,7 +254,7 @@ service /auth on new http:Listener(8080) {
         
         string passwordHash = crypto:hashSha256(password.toBytes()).toBase16();
         
-        sql:ParameterizedQuery insertQuery = `INSERT INTO users (username, name, email, password_hash)
+        sql:ParameterizedQuery insertQuery = `INSERT INTO user (username, name, email, password)
                                               VALUES (${username}, ${name}, ${email}, ${passwordHash})`;
         
         sql:ExecutionResult|sql:Error sqlInsertResult = check dbClient->execute(insertQuery);
@@ -233,6 +269,17 @@ service /auth on new http:Listener(8080) {
     }
 
     // Resource for user login
+    @http:ResourceConfig {
+        cors: {
+            allowMethods: ["POST","OPTIONS"],
+            allowOrigins: ["http://localhost:5173"],
+            allowCredentials: true,
+            allowHeaders: ["Content-Type"],
+            maxAge: 600
+        }
+    }
+
+    // Resource for user login
     resource function post login(http:Caller caller, http:Request req) returns error? {
         json|error reqData = req.getJsonPayload();
         
@@ -243,7 +290,7 @@ service /auth on new http:Listener(8080) {
         string username = check reqData.username.ensureType(string);
         string password = check reqData.password.ensureType(string);
         
-        sql:ParameterizedQuery selectQuery = `SELECT * FROM users WHERE username = ${username}`;
+        sql:ParameterizedQuery selectQuery = `SELECT * FROM user WHERE username = ${username}`;
         
         stream<UserRecord, sql:Error?> resultStream = dbClient->query(selectQuery);
         
@@ -251,20 +298,28 @@ service /auth on new http:Listener(8080) {
         check resultStream.close();
         
         if result is () {
-            return caller->respond({status: "error", message: "Invalid username or password"});
+            return caller->respond({status: "error", message: "No user found"});
         }
         
         UserRecord user = result.value;
         string hashedInputPassword = crypto:hashSha256(password.toBytes()).toBase16();
         
-        if user.passwordHash == hashedInputPassword {
+        // Check if password is null or empty
+        if user.password == "" {
+        io:println("Stored password is empty for user: ", username);
+        return caller->respond({status: "error", message: "Account issue detected. Please contact support."});
+        }
+        if user.password == hashedInputPassword {
             check caller->respond({status: "success", message: "Login successful", email: user.email});
             io:println("User logged in successfully");
         } else {
             check caller->respond({status: "error", message: "Invalid username or password"});
+            
+            
         }
     }
 }
+
 
 //************************************************************Add records using this command
 //curl -X POST http://localhost:8081/heart_disease/addRecord ^
