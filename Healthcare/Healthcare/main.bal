@@ -79,7 +79,7 @@ service /heart_disease on new http:Listener(8081){
     @http:ResourceConfig {
         
         cors: {
-            allowMethods: ["POST","GET"],
+            allowMethods: ["POST","OPTIONS"],
             allowOrigins: ["http://localhost:5173"],
             allowCredentials: true,
             allowHeaders: ["Content-Type"],
