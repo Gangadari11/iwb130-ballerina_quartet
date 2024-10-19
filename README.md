@@ -1,4 +1,4 @@
-# HeartDiseaseAPI
+# CardioInsight
 
 
 This repository contains the backend code for the Heart Disease Diagnosis web application. It implements a machine learning model using Flask and integrates with a Ballerina backend for diagnosis.
