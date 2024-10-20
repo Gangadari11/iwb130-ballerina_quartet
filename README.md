@@ -48,6 +48,7 @@ Make sure you have the following installed:
     
     ```bash
     cd Frontend
+    cd Model
     npm install
 3. **Backend (Model) dependencies:**
    Navigate to the MLmodel directory where the machine learning API resides and install Flask and the required libraries:
