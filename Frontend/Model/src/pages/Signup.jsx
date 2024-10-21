@@ -3,6 +3,7 @@ import { Container, Form, Button } from 'react-bootstrap';
 
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './Signup.css';
 
 const Signup = () => {
     const [formData, setFormData] = useState({ name: '', username: '', email: '', password: '' });
@@ -31,6 +32,7 @@ const Signup = () => {
 
 
     return (
+        <div className='signupbg'>
         <Container className="mt-5">
             <h2>Sign Up</h2>
             <Form onSubmit={handleSubmit}>
@@ -78,6 +80,7 @@ const Signup = () => {
             </Form>
             {responseMessage && <p className="mt-3">{responseMessage}</p>}
         </Container>
+        </div>
     );
 };
 
